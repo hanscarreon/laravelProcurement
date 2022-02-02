@@ -45,7 +45,7 @@ class accountsController extends Controller
             $user_id = Accounts::insertGetId($user_data); // save dynamic key  value pairs, key must exist as cols in db
             $user_data['ac_id'] = $user_id;
             // $this->send_verification($user_data);
-            $data['success'] = "successfully registered!";
+            $data['message'] = "successfully registered!";
             $data['data'] = $user_data;
             $data['status'] =  true;
             return $data;

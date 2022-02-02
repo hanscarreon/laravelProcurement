@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 // register
 Route::post('user/register','accountsController@registerUser');
+Route::post('bid/submit','bidController@submitBid');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
