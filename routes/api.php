@@ -16,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 // register
 Route::post('user/register','accountsController@registerUser');
 Route::post('bid/submit','bidController@submitBid');
+Route::get('product/list/{id}','product\ProductController@getProducts');
 Route::post('product/create','product\ProductController@createProduct');
+Route::get('product/get/one/{id}','product\ProductController@getProductById');
+Route::post('product/update/{id}','product\ProductController@updateProduct');
+Route::get('product/delete/{id}','product\ProductController@deleteProduct');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
