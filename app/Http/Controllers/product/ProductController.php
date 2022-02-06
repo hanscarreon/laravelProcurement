@@ -33,9 +33,8 @@ class ProductController extends Controller
             $input_data['product_description'] = $this->clean_input($input_data['product_description']);
             // clean all input
             $input_data['product_created_at'] = $this->getDatetimeNow();
-            $id = Products::insertGetId($input_data); // save dynamic key  value pairs, key must exist as cols in db
+            $id = Products::insertGetId($input_data); 
             $input_data['product_id'] = $id;
-            // $this->send_verification($input_data);
             $data['message'] = 'successfully created!';
             $data['data'] = $input_data;
             $data['status'] = true;
@@ -71,7 +70,6 @@ class ProductController extends Controller
             // clean all input
             $input_data['product_updated_at'] = $this->getDatetimeNow();
             $updated_data = Products::where('product_id',$id)->update($input_data); 
-            // $this->send_verification($input_data);
             $data['message'] = 'successfully updated';
             $data['data'] = $input_data;
             $data['status'] = true;
@@ -94,7 +92,6 @@ class ProductController extends Controller
             // clean all input
             $input_data['product_updated_at'] = $this->getDatetimeNow();
             $updated_data = Products::where('product_id',$id)->update($input_data); 
-            // $this->send_verification($input_data);
             $data['message'] = 'successfully deleted';
             $data['data'] = $input_data;
             $data['status'] = true;
