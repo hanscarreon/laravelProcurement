@@ -20,6 +20,10 @@ class ProductController extends Controller
                 'product_name' => ['required', 'min:3', 'string'],
                 'ac_firebase_id' => ['required', 'string'],
                 'product_description' => ['required', 'min:3', 'string'],
+                'product_category' => ['required', 'string'],
+                'product_min_bid' => ['required', 'integer'],
+                'product_start_date' => ['required','date','after:tomorrow'],
+                'product_end_date' => ['required','date','after:product_start_date'],
             ]);
 
             if ($validator->fails()) {
@@ -31,6 +35,10 @@ class ProductController extends Controller
             $input_data['product_name'] = $this->clean_input($input_data['product_name']);
             $input_data['ac_firebase_id'] = $this->clean_input($input_data['ac_firebase_id']);
             $input_data['product_description'] = $this->clean_input($input_data['product_description']);
+            $input_data['product_category'] = $this->clean_input($input_data['product_category']);
+            $input_data['product_min_bid'] = $this->clean_input($input_data['product_min_bid']);
+            $input_data['product_start_date'] = $this->clean_input($input_data['product_start_date']);
+            $input_data['product_end_date'] = $this->clean_input($input_data['product_end_date']);
             // clean all input
             $input_data['product_created_at'] = $this->getDatetimeNow();
             $id = Products::insertGetId($input_data); 
@@ -56,6 +64,9 @@ class ProductController extends Controller
                 'product_name' => ['required', 'min:3', 'string'],
                 'product_description' => ['required', 'min:3', 'string'],
                 'product_min_bid' => ['required', 'min:3', 'integer'],
+                'product_category' => ['required', 'string'],
+                'product_start_date' => ['required','date','after:tomorrow'],
+                'product_end_date' => ['required','date','after:product_start_date'],
             ]);
 
             if ($validator->fails()) {
@@ -67,6 +78,9 @@ class ProductController extends Controller
             $input_data['product_name'] = $this->clean_input($input_data['product_name']);
             $input_data['product_description'] = $this->clean_input($input_data['product_description']);
             $input_data['product_min_bid'] = $this->clean_input($input_data['product_min_bid']);
+            $input_data['product_category'] = $this->clean_input($input_data['product_category']);
+            $input_data['product_start_date'] = $this->clean_input($input_data['product_start_date']);
+            $input_data['product_end_date'] = $this->clean_input($input_data['product_end_date']);
             // clean all input
             $input_data['product_updated_at'] = $this->getDatetimeNow();
             $updated_data = Products::where('product_id',$id)->update($input_data); 
