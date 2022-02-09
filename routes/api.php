@@ -14,19 +14,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // register
-Route::post('user/register','accountsController@registerUser');
-Route::post('bid/submit','bidController@submitBid');
-Route::get('product/list/{id}','product\ProductController@getProducts');
-Route::post('product/create','product\ProductController@createProduct');
-Route::get('product/get/one/{id}','product\ProductController@getProductById');
-Route::get('profile/{id}','user\ProfileController@getUser');
-Route::post('profile/update/{id}','user\ProfileController@updateProfile');
-Route::post('product/update/{id}','product\ProductController@updateProduct');
-Route::get('product/delete/{id}','product\ProductController@deleteProduct');
+
+Route::prefix('profile')->group(function () {
+    Route::get('/{id}', 'user\ProfileController@getUser');
+    Route::post('/update/{id}', 'user\ProfileController@updateProfile');
+    Route::post('/update/social/{id}', 'user\ProfileController@submitUpdateSocialProfile');
+});
+
+Route::prefix('product')->group(function () {
+    Route::get('list/{id}', 'product\ProductController@getProducts');
+    Route::post('create', 'product\ProductController@createProduct');
+    Route::get('get/one/{id}', 'product\ProductController@getProductById');
+    Route::post('update/{id}', 'product\ProductController@updateProduct');
+    Route::get('delete/{id}', 'product\ProductController@deleteProduct');
+});
+
+Route::post('user/register', 'accountsController@registerUser');
+Route::post('bid/submit', 'bidController@submitBid');
+
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-
