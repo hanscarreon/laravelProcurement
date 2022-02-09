@@ -38,7 +38,7 @@ class ProductController extends Controller
             if ($file) {
                 $extension = $file->extension();
                 $new_image_name = strval($this->generateUid()).'.' . $extension;
-                $file->move(public_path('image/products'), $new_image_name);
+                $file->move(public_path('image/products/'), $new_image_name);
                 $input_data['product_img'] = 'image/products'.$new_image_name;
             }
 
