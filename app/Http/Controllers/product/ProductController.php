@@ -39,7 +39,7 @@ class ProductController extends Controller
                 $extension = $file->extension();
                 $new_image_name = strval($this->generateUid()).'.' . $extension;
                 $file->move(public_path('image/products'), $new_image_name);
-                $input_data['product_img'] = $new_image_name;
+                $input_data['product_img'] = 'image/products'.$new_image_name;
             }
 
             $input_data['product_name'] = $this->clean_input($input_data['product_name']);
