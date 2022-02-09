@@ -34,4 +34,11 @@ class Controller extends BaseController
         return $data;
     }
 
+    public function generateUid()
+    {
+        $uid = new \DateTime();
+        $uid = $uid->getTimestamp();
+        return $uid;
+    }
+
 }
