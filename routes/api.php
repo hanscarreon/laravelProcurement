@@ -19,6 +19,8 @@ Route::post('bid/submit','bidController@submitBid');
 Route::get('product/list/{id}','product\ProductController@getProducts');
 Route::post('product/create','product\ProductController@createProduct');
 Route::get('product/get/one/{id}','product\ProductController@getProductById');
+Route::get('profile/{id}','user\ProfileController@getUser');
+Route::post('profile/update/{id}','user\ProfileController@updateProfile');
 Route::post('product/update/{id}','product\ProductController@updateProduct');
 Route::get('product/delete/{id}','product\ProductController@deleteProduct');
 
