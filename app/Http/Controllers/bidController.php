@@ -51,4 +51,31 @@ class bidController extends Controller
             return $data;
         }
     }
+
+    public function getProductBid(Request $req)
+    {
+        $data['status'] =  false;
+        $data['message'] =  [];
+        $data['data'] =  [];
+        try {
+
+            $product_id = $req->id;
+
+            $bidModel = new BidProducts();
+            $bidModel = $bidModel->join('accounts', 'accounts.ac_firebase_id', 'bid_products.bp_firebase_user_id');
+            $bidModel = $bidModel->where('bid_products.bp_status', 'active');
+            $bidModel = $bidModel->where('bid_products.bp_product_id', $product_id);
+            
+            $bidModel = $bidModel->get();
+
+            $data['message'] = count($bidModel)." bid data found";
+            $data['data'] = $bidModel;
+            $data['status'] =  true;
+            return $data;
+            
+        } catch (Exception $e) {
+            $data['message'] =  $e;
+            return $data;
+        }
+    }
 }
