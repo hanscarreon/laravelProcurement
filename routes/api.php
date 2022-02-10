@@ -30,7 +30,14 @@ Route::prefix('product')->group(function () {
 });
 
 Route::post('user/register', 'accountsController@registerUser');
-Route::post('bid/submit', 'bidController@submitBid');
+
+route::prefix('bid')->group(function () {
+    Route::post('submit', 'bidController@submitBid');
+    Route::get('get/{id}', 'bidController@getProductBid');
+});
+
+
+Route::get('bid/home/get/all', 'home\HomeController@getAllProducts');
 
 
 
