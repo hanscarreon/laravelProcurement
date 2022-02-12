@@ -11,11 +11,11 @@ use Exception;
 
 class ProductController extends Controller
 {
+
+
     public function createProduct(Request $req)
     {
-        $data['status'] = false;
-        $data['data'] = [];
-        $data['message'] = [];
+
         try {
             $validator = Validator::make($req->input(), [
                 'product_name' => ['required', 'min:3', 'string'],
@@ -26,20 +26,22 @@ class ProductController extends Controller
                 'product_start_date' => ['required', 'date', 'after:tomorrow'],
                 'product_end_date' => ['required', 'date', 'after:product_start_date'],
             ]);
+            $input_data = $req->input();
 
             if ($validator->fails()) {
-                $data['message'] = $validator->errors();
-                return $data;
+                return $this->errorResponse(
+                    $validator->errors()->messages(),
+                    $input_data,
+                );
             }
 
             $file = $req->file('product_img');
-            $input_data = $req->input();
             $input_data['product_img'] = null;
             if ($file) {
                 $extension = $file->extension();
-                $new_image_name = strval($this->generateUid()).'.' . $extension;
+                $new_image_name = strval($this->generateUid()) . '.' . $extension;
                 $file->move(public_path('image/products/'), $new_image_name);
-                $input_data['product_img'] = 'image/products'.$new_image_name;
+                $input_data['product_img'] = 'image/products' . $new_image_name;
             }
 
             $input_data['product_name'] = $this->clean_input($input_data['product_name']);
@@ -53,22 +55,18 @@ class ProductController extends Controller
             $input_data['product_created_at'] = $this->getDatetimeNow();
             $id = Products::insertGetId($input_data);
             $input_data['product_id'] = $id;
-            $input_data['titi'] =  strval($this->generateUid());
-            $data['message'] = 'successfully created!';
-            $data['data'] = $input_data;
-            $data['status'] = true;
-            return $data;
+            return $this->successResponse(
+                'successfully created!',
+                $input_data,
+            );
         } catch (Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            return $this->exceptionResponse($e);
         }
     }
 
     public function updateProduct(Request $req)
     {
-        $data['status'] = false;
-        $data['data'] = [];
-        $data['message'] = [];
+
         try {
             $id = $req->id;
             $validator = Validator::make($req->input(), [
@@ -95,21 +93,18 @@ class ProductController extends Controller
             // clean all input
             $input_data['product_updated_at'] = $this->getDatetimeNow();
             $updated_data = Products::where('product_id', $id)->update($input_data);
-            $data['message'] = 'successfully updated';
-            $data['data'] = $input_data;
-            $data['status'] = true;
-            return $data;
+            return $this->successResponse(
+                'successfully updated',
+                $updated_data,
+            );
         } catch (Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            return $this->exceptionResponse($e);
         }
     }
 
     public function deleteProduct(Request $req)
     {
-        $data['status'] = false;
-        $data['data'] = [];
-        $data['message'] = [];
+
         try {
             $id = $req->id;
 
@@ -117,21 +112,17 @@ class ProductController extends Controller
             // clean all input
             $input_data['product_updated_at'] = $this->getDatetimeNow();
             $updated_data = Products::where('product_id', $id)->update($input_data);
-            $data['message'] = 'successfully deleted';
-            $data['data'] = $input_data;
-            $data['status'] = true;
-            return $data;
+            return $this->errorResponse(
+                'successfully deleted',
+                $updated_data,
+            );
         } catch (Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            return $this->exceptionResponse($e);
         }
     }
 
     public function getProducts(Request $req)
     {
-        $data['message'] = '';
-        $data['status'] = false;
-        $data['body'] = [];
 
         try {
             $productModel = new Products();
@@ -146,22 +137,20 @@ class ProductController extends Controller
             $productModel = $productModel->get();
 
             if (count($productModel) >= 1) {
-                $data['status'] = true;
+                $this->data['status'] = true;
             }
-            $data['body'] = $productModel;
-            return $data;
-        } catch (\Exception $e) {
-            $data['message'] = $e;
-
-            return $data;
+            $msg = count($productModel) . ' found';
+            return $this->errorResponse(
+                $msg,
+                $productModel,
+            );
+        } catch (Exception $e) {
+            return $this->exceptionResponse($e);
         }
     }
 
     public function getProductById(Request $req)
     {
-        $data['message'] = '';
-        $data['status'] = false;
-        $data['body'] = [];
         try {
             $productModel = new Products();
 
@@ -174,14 +163,15 @@ class ProductController extends Controller
             $productModel = $productModel->where('products.product_status', 'active');
             $productModel = $productModel->get();
             if (count($productModel) >= 1) {
-                $data['status'] = true;
+                $this->data['status'] = true;
             }
-            $data['body'] = $productModel;
-            return $data;
-        } catch (\Exception $e) {
-            $data['message'] = $e;
-
-            return $data;
+            $msg = count($productModel) . ' found';
+            return $this->errorResponse(
+                $msg,
+                $productModel,
+            );
+        } catch (Exception $e) {
+            return $this->exceptionResponse($e);
         }
     }
 }

@@ -42,9 +42,9 @@ class bidController extends Controller
             $id = BidProducts::insertGetId($inputData); // save dynamic key  value pairs, key must exist as cols in db
             $inputData['id'] = $id;
             // $this->send_verification($user_data);
+            $data['status'] =  true;
             $data['message'] = "successfully bid!";
             $data['data'] = $inputData;
-            $data['status'] =  true;
             return $data;
         } catch (Exception $e) {
             $data['message'] = $e;

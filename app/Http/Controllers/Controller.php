@@ -11,23 +11,55 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    private $data;
 
-    public function getDatetimeNow() {
-	    $tz_object = new \DateTimeZone('Asia/Manila');
-	    $datetime = new \DateTime();
-        $datetime->setTimezone($tz_object);
-	    return $datetime->format('Y\-m\-d\ H:i:s');
+
+    public function successResponse($message, $body)
+    {
+        $this->data['status'] = true;
+        $this->data['message'] = $message ?? [];
+        $this->data['body'] = $body ?? [];
+
+        return $this->data;
+    }
+    public function errorResponse($errorMessage,$body)
+    {
+        $this->data['status'] = false;
+        $this->data['message'] = $errorMessage ?? [];
+        $this->data['body'] = $body ?? [];
+
+        return $this->data;
     }
 
-    public function getDateNow() {
-	    $tz_object = new \DateTimeZone('Asia/Manila');
-	    $datetime = new \DateTime();
-        $datetime->setTimezone($tz_object);
-	    return $datetime->format('Y-m-d');
+    public function exceptionResponse($error)
+    {
+        $this->data['status'] = false;
+        $this->data['message'] = $error;
+        $this->data['body'] = [];
+        return $this->data;
+       
     }
 
 
-    public function clean_input($data) {
+    public function getDatetimeNow()
+    {
+        $tz_object = new \DateTimeZone('Asia/Manila');
+        $datetime = new \DateTime();
+        $datetime->setTimezone($tz_object);
+        return $datetime->format('Y\-m\-d\ H:i:s');
+    }
+
+    public function getDateNow()
+    {
+        $tz_object = new \DateTimeZone('Asia/Manila');
+        $datetime = new \DateTime();
+        $datetime->setTimezone($tz_object);
+        return $datetime->format('Y-m-d');
+    }
+
+
+    public function clean_input($data)
+    {
         $data = trim($data);
         $data = stripslashes($data);
         $data = htmlspecialchars($data);
@@ -40,5 +72,4 @@ class Controller extends BaseController
         $uid = $uid->getTimestamp();
         return $uid;
     }
-
 }
