@@ -4,6 +4,7 @@ namespace App\Http\Controllers\user;
 
 use App\Accounts;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,10 +12,6 @@ class ProfileController extends Controller
 {
     public function getUser(Request $req)
     {
-        $data['message'] = '';
-        $data['status'] = false;
-        $data['body'] = [];
-
         try {
             $userModel = new Accounts();
             $user_id = $req->id;
@@ -23,24 +20,18 @@ class ProfileController extends Controller
                 $userModel = $userModel->where('accounts.ac_firebase_id', $user_id );
             }
             $userModel = $userModel->get();
-            if(count($userModel) >= 1){
-                $data['status'] = true;
-            }
-
-            $data['body'] = $userModel;
-            return $data;
-
-        } catch (\Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            $msg = count($userModel).' found';
+            return $this->successResponse(
+                $msg,
+                $userModel,
+            );
+        } catch (Exception $e) {
+            return $this->exceptionResponse($e);
         }
     }
 
     public function updateProfile(Request $req)
     {
-        $data['status'] = false;
-        $data['data'] = [];
-        $data['message'] = [];
         try {
             $id = $req->id;
             $validator = Validator::make($req->input(), [
@@ -48,24 +39,26 @@ class ProfileController extends Controller
                 'ac_last_name' => ['required', 'min:3', 'string'],
             ]);
 
+            $inputData = $req->input();
             if ($validator->fails()) {
-                $data['message'] = $validator->errors();
-                return $data;
+                return $this->errorResponse(
+                    $validator->errors()->messages(),
+                    $inputData,
+                );
             }
+            
 
-            $input_data = $req->input();
-            $input_data['ac_first_name'] = $this->clean_input($input_data['ac_first_name']);
-            $input_data['ac_last_name'] = $this->clean_input($input_data['ac_last_name']);
+            $inputData['ac_first_name'] = $this->clean_input($inputData['ac_first_name']);
+            $inputData['ac_last_name'] = $this->clean_input($inputData['ac_last_name']);
             // clean all input
-            $input_data['ac_updated_at'] = $this->getDatetimeNow();
-            $updated_data = Accounts::where('ac_firebase_id',$id)->update($input_data); 
-            $data['message'] = 'successfully updated';
-            $data['data'] = $updated_data;
-            $data['status'] = true;
-            return $data;
-        } catch (\Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            $inputData['ac_updated_at'] = $this->getDatetimeNow();
+            $updated_data = Accounts::where('ac_firebase_id',$id)->update($inputData); 
+            return $this->successResponse(
+                'successfully updated!',
+                $updated_data,
+            );
+        } catch (Exception $e) {
+            return $this->exceptionResponse($e);
         }
     }
 
@@ -81,24 +74,26 @@ class ProfileController extends Controller
                 'ac_instagram' => ['required', 'min:3', 'string'],
             ]);
 
+            $inputData = $req->input();
             if ($validator->fails()) {
-                $data['message'] = $validator->errors();
-                return $data;
+                return $this->errorResponse(
+                    $validator->errors()->messages(),
+                    $inputData,
+                );
             }
 
-            $input_data = $req->input();
-            $input_data['ac_facebook'] = $this->clean_input($input_data['ac_facebook']);
-            $input_data['ac_instagram'] = $this->clean_input($input_data['ac_instagram']);
+            $inputData = $req->input();
+            $inputData['ac_facebook'] = $this->clean_input($inputData['ac_facebook']);
+            $inputData['ac_instagram'] = $this->clean_input($inputData['ac_instagram']);
             // clean all input
-            $input_data['ac_updated_at'] = $this->getDatetimeNow();
-            $updated_data = Accounts::where('ac_firebase_id',$id)->update($input_data); 
-            $data['message'] = 'successfully updated';
-            $data['data'] = $updated_data;
-            $data['status'] = true;
-            return $data;
-        } catch (\Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            $inputData['ac_updated_at'] = $this->getDatetimeNow();
+            $updated_data = Accounts::where('ac_firebase_id',$id)->update($inputData); 
+            return $this->successResponse(
+                'successfully updated!',
+                $updated_data,
+            );
+        } catch (Exception $e) {
+            return $this->exceptionResponse($e);
         }
     }
 

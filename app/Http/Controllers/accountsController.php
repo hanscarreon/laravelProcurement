@@ -29,29 +29,29 @@ class accountsController extends Controller
                 'ac_first_name' => ['required', 'min:3', 'string'],
                 'ac_last_name' => ['required', 'min:3', 'string'],
             ]);
+            $inputData = $req->input();
 
             if ($validator->fails()) {
-                $data['message'] = $validator->errors();
-                return $data;
+                return $this->errorResponse(
+                    $validator->errors()->messages(),
+                    $inputData,
+                );
             }
 
-            $user_data = $req->input();
-            $user_data['ac_email'] = $this->clean_input($user_data['ac_email']);
-            $user_data['ac_first_name'] = $this->clean_input($user_data['ac_first_name']);
-            $user_data['ac_last_name'] = $this->clean_input($user_data['ac_last_name']);
-            $user_data['ac_firebase_id'] = $this->clean_input($user_data['ac_firebase_id']);
+            $inputData['ac_email'] = $this->clean_input($inputData['ac_email']);
+            $inputData['ac_first_name'] = $this->clean_input($inputData['ac_first_name']);
+            $inputData['ac_last_name'] = $this->clean_input($inputData['ac_last_name']);
+            $inputData['ac_firebase_id'] = $this->clean_input($inputData['ac_firebase_id']);
             // clean all input
-            $user_data['ac_created_at'] = $this->getDatetimeNow();
-            $user_id = Accounts::insertGetId($user_data); // save dynamic key  value pairs, key must exist as cols in db
-            $user_data['ac_id'] = $user_id;
-            // $this->send_verification($user_data);
-            $data['message'] = "successfully registered!";
-            $data['data'] = $user_data;
-            $data['status'] =  true;
-            return $data;
+            $inputData['ac_created_at'] = $this->getDatetimeNow();
+            $user_id = Accounts::insertGetId($inputData); // save dynamic key  value pairs, key must exist as cols in db
+            $inputData['ac_id'] = $user_id;
+            return $this->successResponse(
+                'successfully registered!',
+                $inputData,
+            );
         } catch (Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            return $this->exceptionResponse($e);
         }
     }
 }

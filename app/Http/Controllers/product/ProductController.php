@@ -26,38 +26,38 @@ class ProductController extends Controller
                 'product_start_date' => ['required', 'date', 'after:tomorrow'],
                 'product_end_date' => ['required', 'date', 'after:product_start_date'],
             ]);
-            $input_data = $req->input();
+            $inputData = $req->input();
 
             if ($validator->fails()) {
                 return $this->errorResponse(
                     $validator->errors()->messages(),
-                    $input_data,
+                    $inputData,
                 );
             }
 
             $file = $req->file('product_img');
-            $input_data['product_img'] = null;
+            $inputData['product_img'] = null;
             if ($file) {
                 $extension = $file->extension();
                 $new_image_name = strval($this->generateUid()) . '.' . $extension;
                 $file->move(public_path('image/products/'), $new_image_name);
-                $input_data['product_img'] = 'image/products' . $new_image_name;
+                $inputData['product_img'] = 'image/products' . $new_image_name;
             }
 
-            $input_data['product_name'] = $this->clean_input($input_data['product_name']);
-            $input_data['ac_firebase_id'] = $this->clean_input($input_data['ac_firebase_id']);
-            $input_data['product_description'] = $this->clean_input($input_data['product_description']);
-            $input_data['product_category'] = $this->clean_input($input_data['product_category']);
-            $input_data['product_min_bid'] = $this->clean_input($input_data['product_min_bid']);
-            $input_data['product_start_date'] = $this->clean_input($input_data['product_start_date']);
-            $input_data['product_end_date'] = $this->clean_input($input_data['product_end_date']);
+            $inputData['product_name'] = $this->clean_input($inputData['product_name']);
+            $inputData['ac_firebase_id'] = $this->clean_input($inputData['ac_firebase_id']);
+            $inputData['product_description'] = $this->clean_input($inputData['product_description']);
+            $inputData['product_category'] = $this->clean_input($inputData['product_category']);
+            $inputData['product_min_bid'] = $this->clean_input($inputData['product_min_bid']);
+            $inputData['product_start_date'] = $this->clean_input($inputData['product_start_date']);
+            $inputData['product_end_date'] = $this->clean_input($inputData['product_end_date']);
             // clean all input
-            $input_data['product_created_at'] = $this->getDatetimeNow();
-            $id = Products::insertGetId($input_data);
-            $input_data['product_id'] = $id;
+            $inputData['product_created_at'] = $this->getDatetimeNow();
+            $id = Products::insertGetId($inputData);
+            $inputData['product_id'] = $id;
             return $this->successResponse(
                 'successfully created!',
-                $input_data,
+                $inputData,
             );
         } catch (Exception $e) {
             return $this->exceptionResponse($e);
@@ -78,21 +78,24 @@ class ProductController extends Controller
                 'product_end_date' => ['required', 'date', 'after:product_start_date'],
             ]);
 
+            $inputData = $req->input();
+
             if ($validator->fails()) {
-                $data['message'] = $validator->errors();
-                return $data;
+                return $this->errorResponse(
+                    $validator->errors()->messages(),
+                    $inputData,
+                );
             }
 
-            $input_data = $req->input();
-            $input_data['product_name'] = $this->clean_input($input_data['product_name']);
-            $input_data['product_description'] = $this->clean_input($input_data['product_description']);
-            $input_data['product_min_bid'] = $this->clean_input($input_data['product_min_bid']);
-            $input_data['product_category'] = $this->clean_input($input_data['product_category']);
-            $input_data['product_start_date'] = $this->clean_input($input_data['product_start_date']);
-            $input_data['product_end_date'] = $this->clean_input($input_data['product_end_date']);
+            $inputData['product_name'] = $this->clean_input($inputData['product_name']);
+            $inputData['product_description'] = $this->clean_input($inputData['product_description']);
+            $inputData['product_min_bid'] = $this->clean_input($inputData['product_min_bid']);
+            $inputData['product_category'] = $this->clean_input($inputData['product_category']);
+            $inputData['product_start_date'] = $this->clean_input($inputData['product_start_date']);
+            $inputData['product_end_date'] = $this->clean_input($inputData['product_end_date']);
             // clean all input
-            $input_data['product_updated_at'] = $this->getDatetimeNow();
-            $updated_data = Products::where('product_id', $id)->update($input_data);
+            $inputData['product_updated_at'] = $this->getDatetimeNow();
+            $updated_data = Products::where('product_id', $id)->update($inputData);
             return $this->successResponse(
                 'successfully updated',
                 $updated_data,
@@ -108,10 +111,10 @@ class ProductController extends Controller
         try {
             $id = $req->id;
 
-            $input_data['product_status'] = 'deleted';
+            $inputData['product_status'] = 'deleted';
             // clean all input
-            $input_data['product_updated_at'] = $this->getDatetimeNow();
-            $updated_data = Products::where('product_id', $id)->update($input_data);
+            $inputData['product_updated_at'] = $this->getDatetimeNow();
+            $updated_data = Products::where('product_id', $id)->update($inputData);
             return $this->errorResponse(
                 'successfully deleted',
                 $updated_data,

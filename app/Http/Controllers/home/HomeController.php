@@ -19,14 +19,13 @@ class HomeController extends Controller
             $productModel = $productModel->where('products.product_status', 'active');
             $productModel = $productModel->get();
 
-            if (count($productModel) >= 1) {
-                $data['status'] = true;
-            }
-            $data['body'] = $productModel;
-            return $data;
-        } catch (\Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            $msg = count($productModel).' found';
+            return $this->successResponse(
+                $msg,
+                $productModel,
+            );
+        } catch (Exception $e) {
+            return $this->exceptionResponse($e);
         }
     }
 }

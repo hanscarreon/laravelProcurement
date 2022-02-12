@@ -16,9 +16,6 @@ class bidController extends Controller
 
     public function submitBid(Request $req)
     {
-        $data['status'] =  false;
-        $data['data'] =  [];
-        $data['message'] =  [];
         try {
 
             $validator = Validator::make($req->input(), [
@@ -28,11 +25,13 @@ class bidController extends Controller
                 'bp_ammount_bid' => ['required',]
             ]);
 
-            if ($validator->fails()) {
-                $data['message'] = $validator->errors();
-                return $data;
-            }
             $inputData = $req->input();
+            if ($validator->fails()) {
+                return $this->errorResponse(
+                    $validator->errors()->messages(),
+                    $inputData,
+                );
+            }
             $inputData['bp_product_id'] = $this->clean_input($inputData['bp_product_id']);
             $inputData['bp_firebase_user_id'] = $this->clean_input($inputData['bp_firebase_user_id']);
             $inputData['bp_ammount_bid'] = $this->clean_input($inputData['bp_ammount_bid']);
@@ -41,22 +40,18 @@ class bidController extends Controller
             $inputData['bp_created_at'] = $this->getDatetimeNow();
             $id = BidProducts::insertGetId($inputData); // save dynamic key  value pairs, key must exist as cols in db
             $inputData['id'] = $id;
-            // $this->send_verification($user_data);
-            $data['status'] =  true;
-            $data['message'] = "successfully bid!";
-            $data['data'] = $inputData;
-            return $data;
+            return $this->successResponse(
+                'successfully bid!',
+                $inputData,
+            );
         } catch (Exception $e) {
-            $data['message'] = $e;
-            return $data;
+            return $this->exceptionResponse($e);
         }
     }
 
     public function getProductBid(Request $req)
     {
-        $data['status'] =  false;
-        $data['message'] =  [];
-        $data['data'] =  [];
+        
         try {
 
             $product_id = $req->id;
@@ -68,14 +63,14 @@ class bidController extends Controller
             
             $bidModel = $bidModel->get();
 
-            $data['message'] = count($bidModel)." bid data found";
-            $data['data'] = $bidModel;
-            $data['status'] =  true;
-            return $data;
+            $msg = count($bidModel)." bid data found";
+            return $this->successResponse(
+                $msg,
+                $bidModel,
+            );
             
         } catch (Exception $e) {
-            $data['message'] =  $e;
-            return $data;
+            return $this->exceptionResponse($e);
         }
     }
 }
